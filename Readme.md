@@ -34,11 +34,8 @@ If using locally in your project:
 
 ```bash
 # If you publish to npm later:
-npm install amazon-fees
+npm install amazon-seller-fees
 
-# For local testing (from package folder)
-npm pack
-npm install ./amazon-fees-1.0.0.tgz
 ```
 
 ---
@@ -52,7 +49,7 @@ const {
   getGstPercent,
   getClosingFee,
   getReferralRate,
-} = require("amazon-fees"); // or require('./path/to/index.js')
+} = require("amazon-seller-fees"); // or require('./path/to/index.js')
 
 // List categories
 console.log(getAllCategories());
