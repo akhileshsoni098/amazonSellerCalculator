@@ -1,9 +1,14 @@
 {
-  "name": "amazon-fees",
+  "name": "amazon-seller-fees",
   "version": "1.0.0",
   "description": "Utilities to fetch Amazon GST, referral and closing fees for sellers",
   "main": "index.js",
-  "files": ["index.js", "amazonClosingFee.js", "amazonData.js", "README.md"],
+  "files": [
+    "index.js",
+    "amazonClosingFee.js",
+    "amazonData.js",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
