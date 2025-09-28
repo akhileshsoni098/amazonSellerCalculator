@@ -13,11 +13,12 @@ Lightweight Node.js utilities to look up **Amazon India** GST rates, referral-fe
 2. [Quick start](#quick-start)
 3. [API — functions & examples](#api)
 
-   * [`getAllCategories()`](#getallcategories)
-   * [`getSubcategories(category)`](#getsubcategoriescategory)
-   * [`getGstPercent(category, subcategory)`](#getgstpercentcategory-subcategory)
-   * [`getClosingFee(category, subcategory, options)`](#getclosingfeecategory-subcategory-options)
-   * [`getReferralRate(category, subcategory, sellingPrice, options)`](#getreferralratecategory-subcategory-sellingprice-options)
+   - [`getAllCategories()`](#getallcategories)
+   - [`getSubcategories(category)`](#getsubcategoriescategory)
+   - [`getGstPercent(category, subcategory)`](#getgstpercentcategory-subcategory)
+   - [`getClosingFee(category, subcategory, options)`](#getclosingfeecategory-subcategory-options)
+   - [`getReferralRate(category, subcategory, sellingPrice, options)`](#getreferralratecategory-subcategory-sellingprice-options)
+
 4. [Matching behaviour & notes](#matching-behaviour--notes)
 5. [Errors & return shapes](#errors--return-shapes)
 6. [Testing locally & publishing to npm](#testing-locally--publishing-to-npm)
@@ -40,8 +41,6 @@ npm pack
 npm install ./amazon-fees-1.0.0.tgz
 ```
 
-> Make sure `amazonClosingFee.js` and `amazonData.js` are present in the package root (or adjust require paths).
-
 ---
 
 # Quick start
@@ -59,17 +58,28 @@ const {
 console.log(getAllCategories());
 
 // Get subcategories (by id or display name)
-console.log(getSubcategories('automotive'));
-console.log(getSubcategories('Automotive, Car & Accessories'));
+console.log(getSubcategories("automotive"));
+console.log(getSubcategories("Automotive, Car & Accessories"));
 
 // GST percent
-console.log(getGstPercent('automotive', 'Automotive - Helmets & Riding Gloves'));
+console.log(
+  getGstPercent("automotive", "Automotive - Helmets & Riding Gloves")
+);
 
 // Closing fee suggestions for price
-console.log(getClosingFee('booksMoviesMusic', 'Books', { price: 450, fulfillmentType: 'selfShip' }));
+console.log(
+  getClosingFee("booksMoviesMusic", "Books", {
+    price: 450,
+    fulfillmentType: "selfShip",
+  })
+);
 
 // Referral rate and optional closing fees
-console.log(getReferralRate('automotive', 'Automotive - Tyres & Rims', 550, { includeClosingFee: true }));
+console.log(
+  getReferralRate("automotive", "Automotive - Tyres & Rims", 550, {
+    includeClosingFee: true,
+  })
+);
 ```
 
 ---
@@ -91,10 +101,10 @@ getAllCategories();
 
 Returns subcategories for a given category.
 
-* `category` — string: category **id** (e.g. `'automotive'`) or **display name**.
+- `category` — string: category **id** (e.g. `'automotive'`) or **display name**.
 
 ```js
-getSubcategories('automotive');
+getSubcategories("automotive");
 // => { ok: true, category_id: 'automotive', category_name: 'Automotive, Car & Accessories', subcategories: [{ name: 'Automotive - Helmets & Riding Gloves', gst_percent: 18 }, ...] }
 ```
 
@@ -102,11 +112,11 @@ getSubcategories('automotive');
 
 Return GST percentage for a subcategory.
 
-* `category` — string (id or display name)
-* `subcategory` — string (name or fragment)
+- `category` — string (id or display name)
+- `subcategory` — string (name or fragment)
 
 ```js
-getGstPercent('automotive', 'Helmets & Riding Gloves');
+getGstPercent("automotive", "Helmets & Riding Gloves");
 // => { ok: true, gst_percent: 18 }
 ```
 
@@ -116,14 +126,14 @@ Return closing-fee slab data or computed closing fees for a given price.
 
 **Options**
 
-* `price` (number) — INR to pick slab
-* `fulfillmentType` — `'standardEasyShip' | 'easyShipPrime' | 'selfShip' | 'sellerFlex' | 'categoriesWithException' | 'allCategories'`
-* `selfShipType` — `'books' | 'allExceptBooks'` (used when `fulfillmentType === 'selfShip'`)
+- `price` (number) — INR to pick slab
+- `fulfillmentType` — `'standardEasyShip' | 'easyShipPrime' | 'selfShip' | 'sellerFlex' | 'categoriesWithException' | 'allCategories'`
+- `selfShipType` — `'books' | 'allExceptBooks'` (used when `fulfillmentType === 'selfShip'`)
 
 **Behaviors**
 
-* If `price` present → returns fee(s) for that price (single fulfillment type or all suggestions)
-* If no `price` → returns full `fixedClosingFee` slab data
+- If `price` present → returns fee(s) for that price (single fulfillment type or all suggestions)
+- If no `price` → returns full `fixedClosingFee` slab data
 
 **Examples**
 
@@ -133,7 +143,11 @@ getClosingFee(null, null, { price: 450 });
 // => { ok: true, fees_for_price: { standardEasyShip: 11, easyShipPrime: 11, sellerFlex: 11, selfShip: { books: 25, allExceptBooks: 25 }, ... } }
 
 // Specific fulfillment type
-getClosingFee('booksMoviesMusic','Books',{ price:450, fulfillmentType:'selfShip', selfShipType:'books' });
+getClosingFee("booksMoviesMusic", "Books", {
+  price: 450,
+  fulfillmentType: "selfShip",
+  selfShipType: "books",
+});
 // => { ok:true, fulfillmentType:'selfShip', selfShipType:'books', fee:25 }
 ```
 
@@ -143,19 +157,21 @@ Return referral percent, referral amount, GST, and optional closing fees.
 
 **Parameters**
 
-* `category` — string (id or name)
-* `subcategory` — string
-* `sellingPrice` — number (INR)
-* `options`:
+- `category` — string (id or name)
+- `subcategory` — string
+- `sellingPrice` — number (INR)
+- `options`:
 
-  * `includeClosingFee` (boolean) — attach closing fee suggestions
-  * `fulfillmentType` (string) — narrow closing fee when included
-  * `selfShipType` (string) — `'books' | 'allExceptBooks'` for `selfShip`
+  - `includeClosingFee` (boolean) — attach closing fee suggestions
+  - `fulfillmentType` (string) — narrow closing fee when included
+  - `selfShipType` (string) — `'books' | 'allExceptBooks'` for `selfShip`
 
 **Example**
 
 ```js
-getReferralRate('automotive','Automotive - Tyres & Rims',550,{ includeClosingFee:true });
+getReferralRate("automotive", "Automotive - Tyres & Rims", 550, {
+  includeClosingFee: true,
+});
 // => { ok: true, category_id:'automotive', subcategory_name:'Automotive - Tyres & Rims', gst_percent:18, selling_price:550, referral_percent:7.0, referral_amount:38.5, closing_fee_suggestions: { ... } }
 ```
 
@@ -163,99 +179,28 @@ getReferralRate('automotive','Automotive - Tyres & Rims',550,{ includeClosingFee
 
 # Matching behaviour & notes
 
-* Category input accepts **category id** (e.g. `automotive`) or **display name**.
-* Subcategory matching is fuzzy: exact match → contains-match → token-score fallback.
-* Price must be a non-negative number (INR). Invalid price → error.
-* Closing fee dataset is read from `amazonClosingFee.fixedClosingFee`. If you want auto-selection of a default fulfillment mode, pass `fulfillmentType` or I can update the function to choose a default.
+- Category input accepts **category id** (e.g. `automotive`) or **display name**.
+- Subcategory matching is fuzzy: exact match → contains-match → token-score fallback.
+- Price must be a non-negative number (INR). Invalid price → error.
+- Closing fee dataset is read from `amazonClosingFee.fixedClosingFee`. If you want auto-selection of a default fulfillment mode, pass `fulfillmentType` or I can update the function to choose a default.
 
 ---
 
 # Errors & return shapes
 
-* Success: `{ ok: true, ...data }`
-* Failure: `{ ok: false, error: "message" }`
+- Success: `{ ok: true, ...data }`
+- Failure: `{ ok: false, error: "message" }`
 
 Common errors:
 
-* `Category not found`
-* `Subcategory not found`
-* `Invalid sellingPrice`
+- `Category not found`
+- `Subcategory not found`
+- `Invalid sellingPrice`
 
 ---
-
-# Testing locally & publishing to npm
-
-1. Minimal `package.json`:
-
-```json
-{
-  "name": "amazon-fees",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
-}
-```
-
-2. Quick local test:
-
-```bash
-node -e "console.log(require('./index').getAllCategories())"
-```
-
-3. Create tarball & local install:
-
-```bash
-npm pack
-npm install ../amazon-fees-1.0.0.tgz
-```
-
-4. Publish to npm:
-
-```bash
-npm login
-npm publish            # scoped: npm publish --access public
-```
-
-**CI publish tip (GitHub Actions)**: create an npm automation token, save as `NPM_TOKEN`, and use a workflow that runs `npm publish` on tag push. If you want, I can generate a ready `.github/workflows/publish.yml`.
-
----
-
-# Contribute / TypeScript tips
-
-* Add `index.d.ts` for TypeScript:
-
-```ts
-export function getReferralRate(category: string, subcategory: string, sellingPrice: number, options?: any): any;
-```
-
-* Keep `amazonData.js` up-to-date when Amazon changes slabs.
-* Add unit tests (Jest/Mocha) to validate critical slabs.
-* If adding new fulfillment modes, update `amazonClosingFee.js` structure and `computeClosingFeesForPrice()`.
-
----
-
-# FAQ
-
-**Q: Category not matched?**
-A: Try category **id** (lowercase) or the exact display name. If still ambiguous, pass more of the subcategory name.
-
-**Q: Closing fee seems wrong for books?**
-A: Use `fulfillmentType: 'selfShip'` and `selfShipType: 'books'` or pass `price` so slab is selected correctly.
-
-**Q: I want a default fulfillmentType chosen automatically.**
-A: Tell me which default you prefer (e.g., `selfShip` or `standardEasyShip`) and I’ll add that behavior.
-
----
-
-# Changelog
-
-* `1.0.0` — initial public functions & logic, data included.
 
 ---
 
 # License
 
 MIT © AKHILESH SONI
-
-
-
