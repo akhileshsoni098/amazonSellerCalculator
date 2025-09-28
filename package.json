@@ -1,6 +1,6 @@
 {
   "name": "amazon-seller-fees",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utilities to fetch Amazon GST, referral and closing fees for sellers",
   "main": "index.js",
   "files": [
